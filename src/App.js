@@ -1,26 +1,67 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter as Router, Route, Link, Switch,
+  Redirect ,useHistory, useLocation} from "react-router-dom";
 
+import Home from "./component/Bt01/Home";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router>
+        <Switch>
+          <Route path="/login"><Login/></Route>
+          <PrivateRoute path="/">
+              <Home logout={auth.logout}/>
+          </PrivateRoute>
+        </Switch>
+      </Router>
     </div>
   );
 }
+let auth={
+  isLogin: false,
+  login:(cb)=>{
+    auth.isLogin=true;
+    cb();
+  },
+  logout: (cb)=>{
+    auth.isLogin=false;
+  }
+}
+function PrivateRoute({children, ...rest}){
+  return auth.isLogin?(
+    children
+  ):(
+    <Route
+      {...rest}
+      render={({ location }) =>
+        auth.isLogin ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
+function Login(){
+  let history= useHistory();
+  let location= useLocation();
+  let {from}=location.state||{from: "/"};
+  let login=()=>{
+    auth.login(()=>{
+      history.replace(from);
+    });
+  }
+  return(
+      <div>
+        <button onClick={login}>Login</button>
+      </div>
+  );
+}
 export default App;
