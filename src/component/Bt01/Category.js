@@ -2,6 +2,7 @@ import React from 'react';
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom";
 export default function Category (){
     let {path, url} = useRouteMatch();
+    console.log(path, " ", url);
     return (
         <div>
             <h1>Topics</h1>

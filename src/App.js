@@ -3,14 +3,18 @@ import {BrowserRouter as Router, Route, Link, Switch,
   Redirect ,useHistory, useLocation} from "react-router-dom";
 
 import Home from "./component/Bt01/Home";
+import Category from "./component/Bt01/Category";
 function App() {
   return (
     <div>
       <Router>
+        <Link to="/">Home</Link> |{" "}
+        <Link to="/category">Category</Link>
         <Switch>
+          <Route exact path="/"><Home/></Route>
           <Route path="/login"><Login/></Route>
-          <PrivateRoute path="/">
-              <Home logout={auth.logout}/>
+          <PrivateRoute path="/category">
+              <Category/>
           </PrivateRoute>
         </Switch>
       </Router>
@@ -19,12 +23,13 @@ function App() {
 }
 let auth={
   isLogin: false,
-  login:(cb)=>{
+  login(cb){
     auth.isLogin=true;
     cb();
   },
-  logout: (cb)=>{
+  logout(cb){
     auth.isLogin=false;
+    cb();
   }
 }
 function PrivateRoute({children, ...rest}){
@@ -52,7 +57,7 @@ function PrivateRoute({children, ...rest}){
 function Login(){
   let history= useHistory();
   let location= useLocation();
-  let {from}=location.state||{from: "/"};
+  let {from}=location.state || {from: "/"};
   let login=()=>{
     auth.login(()=>{
       history.replace(from);
